@@ -1,0 +1,4 @@
+root = true
+
+[*.tf]
+indent_size = 2
