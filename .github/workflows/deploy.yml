@@ -19,6 +19,20 @@ jobs:
         run: yarn
       - name: Build site
         run: yarn build
+      - name: Upload build
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: out
+
+  upload-to-s3:
+    runs-on: ubuntu-20.04
+    needs: [build-site]
+    steps:
+      - name: Download site build
+        uses: actions/download-artifact@v2
+        with:
+          name: build
       - name: Upload to S3
         run: aws s3 cp ./out/ s3://${{ github.event.client_payload.event }}.python.pizza/ --recursive
         env:
