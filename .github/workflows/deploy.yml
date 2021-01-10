@@ -23,6 +23,7 @@ jobs:
         run: |
           set +e
           echo "aaa ${{ github.event.client_payload.event }}"
+          echo "ae aws s3 cp ./out/ s3://${{ github.event.client_payload.event }}.python.pizza/ --recursive"
           AW=$(aws s3 cp ./out/ s3://${{ github.event.client_payload.event }}.python.pizza/ --recursive)
           echo $AW
         env:
