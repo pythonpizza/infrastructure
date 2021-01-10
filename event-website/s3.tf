@@ -17,7 +17,7 @@ resource "aws_s3_bucket_policy" "policy" {
 data "aws_iam_policy_document" "cloudfare_access" {
   statement {
     sid    = "IPAllow"
-    effect = "Deny"
+    effect = "Allow"
 
     principals {
       type        = "AWS"
@@ -29,11 +29,11 @@ data "aws_iam_policy_document" "cloudfare_access" {
     ]
 
     resources = [
-      "arn:aws:s3:::${aws_s3_bucket.website.id}/*"
+      "arn:aws:s3:::${aws_s3_bucket.website.id}/*",
     ]
 
     condition {
-      test     = "NotIpAddress"
+      test     = "IpAddress"
       variable = "aws:SourceIp"
       values   = data.cloudflare_ip_ranges.cloudflare.cidr_blocks
     }
