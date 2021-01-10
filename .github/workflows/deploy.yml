@@ -5,6 +5,29 @@ on:
     types: [prod_push]
 
 jobs:
+  notify_deploy_started:
+    runs-on: ubuntu-20.04
+    outputs:
+      check_job_id: ${{ fromJson(steps.create_check_run.outputs.data).id }}
+    steps:
+      - uses: octokit/request-action@v2.x
+        id: create_check_run
+        with:
+          route: POST /repos/{owner}/{repo}/check-runs
+          owner: pythonpizza
+          repo: ${{ github.event.client_payload.repository }}
+          mediaType: |
+            previews:
+              - antiope
+          name: "Deployment"
+          head_sha: ${{ github.event.client_payload.sha }}
+          output: |
+            title: Deployment
+            images:
+              - alt: Logo
+                image_url: https://avatars0.githubusercontent.com/u/71673624?s=460&u=9b7ca66487214805e173db6981ddd0ff246cf24e&v=4
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
   terraform:
     runs-on: ubuntu-20.04
     defaults:
@@ -33,7 +56,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
 
-  build-site:
+  build_site:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@master
@@ -57,9 +80,9 @@ jobs:
           name: build
           path: out
 
-  upload-to-s3:
+  upload_to_s3:
     runs-on: ubuntu-20.04
-    needs: [build-site, terraform]
+    needs: [build_site, terraform]
     steps:
       - name: Download site build
         uses: actions/download-artifact@v2
@@ -71,3 +94,22 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
+
+  notify_deploy_completed:
+    runs-on: ubuntu-20.04
+    needs: [upload-to-s3]
+    steps:
+      - uses: octokit/request-action@v2.x
+        id: update_check_run
+        with:
+          route: PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}
+          owner: pythonpizza
+          repo: ${{ github.event.client_payload.repository }}
+          mediaType: |
+            previews:
+              - antiope
+          check_run_id: ${{ needs.notify_deploy_started.outputs.check_job_id }}
+          conclusion: "success"
+          status: "completed"
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
