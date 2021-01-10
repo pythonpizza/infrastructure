@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "pythonpizza-terraform"
+    bucket = "pythonpizza-global-terraform"
     key    = "global/terraform.tfstate"
     region = "eu-central-1"
   }
