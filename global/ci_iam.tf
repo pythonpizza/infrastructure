@@ -23,7 +23,10 @@ data "aws_iam_policy_document" "s3_policy" {
     ]
 
     resources = [
-      "arn:aws:s3:::*.python.pizza/*"
+      "arn:aws:s3:::*.python.pizza",
+      "arn:aws:s3:::*.python.pizza/*",
+      "arn:aws:s3:::python.pizza",
+      "arn:aws:s3:::python.pizza/*",
     ]
   }
 }
