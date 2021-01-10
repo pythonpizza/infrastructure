@@ -10,7 +10,8 @@ jobs:
     defaults:
       run:
         working-directory: event-website
-        TF_WORKSPACE: ${{ github.event.client_payload.event }}
+        env:
+          TF_WORKSPACE: ${{ github.event.client_payload.event }}
     steps:
       - uses: actions/checkout@master
       - uses: hashicorp/setup-terraform@v1
