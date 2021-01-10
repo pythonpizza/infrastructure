@@ -28,6 +28,7 @@ jobs:
         run: terraform apply -auto-approve -no-color
         env:
           TF_VAR_cloudflare_token: ${{ secrets.TF_VAR_CLOUDFLARE_TOKEN }}
+          TF_VAR_domain: ${{ github.event.client_payload.domain }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
