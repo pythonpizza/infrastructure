@@ -44,7 +44,7 @@ jobs:
 
   upload-to-s3:
     runs-on: ubuntu-20.04
-    needs: [build-site]
+    needs: [build-site, terraform]
     steps:
       - name: Download site build
         uses: actions/download-artifact@v2
