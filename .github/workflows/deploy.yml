@@ -4,14 +4,15 @@ on:
   repository_dispatch:
     types: [prod_push]
 
+env:
+  TF_WORKSPACE: ${{ github.event.client_payload.event }}
+
 jobs:
   terraform:
     runs-on: ubuntu-20.04
     defaults:
       run:
         working-directory: event-website
-        env:
-          TF_WORKSPACE: ${{ github.event.client_payload.event }}
     steps:
       - uses: actions/checkout@master
       - uses: hashicorp/setup-terraform@v1
