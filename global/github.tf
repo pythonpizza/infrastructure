@@ -13,3 +13,9 @@ resource "github_actions_secret" "aws_access_key_secret" {
   secret_name     = "AWS_SECRET_ACCESS_KEY"
   plaintext_value = aws_iam_access_key.key.secret
 }
+
+resource "github_actions_secret" "cloudflare_token" {
+  repository      = local.infrastructure_repo
+  secret_name     = "TF_VAR_CLOUDFLARE_TOKEN"
+  plaintext_value = cloudflare_api_token.ci.value
+}
