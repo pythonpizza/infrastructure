@@ -4,9 +4,6 @@ on:
   repository_dispatch:
     types: [prod_push]
 
-env:
-  TF_WORKSPACE: ${{ github.event.client_payload.event }}
-
 jobs:
   terraform:
     runs-on: ubuntu-20.04
@@ -21,7 +18,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
-      - run: terraform workspace new $TF_WORKSPACE || true
+      - run: terraform workspace select ${{ github.event.client_payload.event }} || terraform workspace new ${{ github.event.client_payload.event }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
