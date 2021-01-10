@@ -18,17 +18,20 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
-      - run: terraform workspace select ${{ github.event.client_payload.event }} || terraform workspace new ${{ github.event.client_payload.event }}
+      - name: Select or create event workspace
+        run: terraform workspace select ${{ github.event.client_payload.event }} || terraform workspace new ${{ github.event.client_payload.event }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
-      - run: terraform apply -auto-apply -no-color
+      - name: Apply changes
+        run: terraform apply -auto-approve -no-color
         env:
           TF_VAR_cloudflare_token: ${{ secrets.TF_VAR_CLOUDFLARE_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
+
   build-site:
     runs-on: ubuntu-20.04
     steps:
