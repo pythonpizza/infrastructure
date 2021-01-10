@@ -5,8 +5,22 @@ on:
     types: [prod_push]
 
 jobs:
+  generate_jwt_token:
+    runs-on: ubuntu-20.04
+    outputs:
+      jwt_token: ${{ steps.generate_token.outputs.token }}
+    steps:
+      - name: Generate token
+        id: generate_token
+        uses: tibdex/github-app-token@v1
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+          repository: pythonpizza/${{ github.event.client_payload.repository }}
+
   notify_deploy_started:
     runs-on: ubuntu-20.04
+    needs: [generate_jwt_token]
     outputs:
       check_job_id: ${{ fromJson(steps.create_check_run.outputs.data).id }}
     steps:
@@ -27,7 +41,8 @@ jobs:
               - alt: Logo
                 image_url: https://avatars0.githubusercontent.com/u/71673624?s=460&u=9b7ca66487214805e173db6981ddd0ff246cf24e&v=4
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ needs.generate_jwt_token.outputs.jwt_token }}
+
   terraform:
     runs-on: ubuntu-20.04
     defaults:
@@ -97,7 +112,7 @@ jobs:
 
   notify_deploy_completed:
     runs-on: ubuntu-20.04
-    needs: [upload_to_s3]
+    needs: [upload_to_s3, generate_jwt_token, notify_deploy_started]
     steps:
       - uses: octokit/request-action@v2.x
         id: update_check_run
@@ -112,4 +127,4 @@ jobs:
           conclusion: "success"
           status: "completed"
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          GITHUB_TOKEN: ${{ needs.generate_jwt_token.outputs.jwt_token }}
