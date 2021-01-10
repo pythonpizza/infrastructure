@@ -97,7 +97,7 @@ jobs:
 
   notify_deploy_completed:
     runs-on: ubuntu-20.04
-    needs: [upload-to-s3]
+    needs: [upload_to_s3]
     steps:
       - uses: octokit/request-action@v2.x
         id: update_check_run
