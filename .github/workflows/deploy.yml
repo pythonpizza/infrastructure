@@ -106,7 +106,7 @@ jobs:
 
   notify_deploy_completed:
     runs-on: ubuntu-20.04
-    needs: [upload_to_s3]
+    needs: [upload_to_s3, notify_deploy_started]
     steps:
       - name: Generate token
         id: generate_token
