@@ -20,13 +20,14 @@ jobs:
 
   notify_deploy_started:
     runs-on: ubuntu-20.04
-    needs: [generate_jwt_token]
+    needs: generate_jwt_token
     outputs:
       check_job_id: ${{ fromJson(steps.create_check_run.outputs.data).id }}
     steps:
       - uses: octokit/request-action@v2.x
         id: create_check_run
         with:
+          GITHUB_TOKEN: ${{ needs.generate_jwt_token.outputs.jwt_token }}
           route: POST /repos/{owner}/{repo}/check-runs
           owner: pythonpizza
           repo: ${{ github.event.client_payload.repository }}
@@ -40,8 +41,6 @@ jobs:
             images:
               - alt: Logo
                 image_url: https://avatars0.githubusercontent.com/u/71673624?s=460&u=9b7ca66487214805e173db6981ddd0ff246cf24e&v=4
-        env:
-          GITHUB_TOKEN: ${{ needs.generate_jwt_token.outputs.jwt_token }}
 
   terraform:
     runs-on: ubuntu-20.04
