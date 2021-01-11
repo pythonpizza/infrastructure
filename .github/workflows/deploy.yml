@@ -30,6 +30,7 @@ jobs:
           head_sha: ${{ github.event.client_payload.sha }}
           output: |
             title: Deployment
+            summary: Building and deploying the website
             images:
               - alt: Logo
                 image_url: https://avatars0.githubusercontent.com/u/71673624?s=460&u=9b7ca66487214805e173db6981ddd0ff246cf24e&v=4
