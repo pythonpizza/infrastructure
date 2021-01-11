@@ -24,6 +24,7 @@ jobs:
     outputs:
       check_job_id: ${{ fromJson(steps.create_check_run.outputs.data).id }}
     steps:
+      - run: echo "token ${{ needs.generate_jwt_token.outputs.jwt_token }}"
       - uses: octokit/request-action@v2.x
         id: create_check_run
         with:
