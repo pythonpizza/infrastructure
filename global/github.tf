@@ -19,3 +19,9 @@ resource "github_actions_secret" "cloudflare_token" {
   secret_name     = "TF_VAR_CLOUDFLARE_TOKEN"
   plaintext_value = cloudflare_api_token.ci.value
 }
+
+resource "github_actions_secret" "cloudflare_zone_id" {
+  repository      = local.infrastructure_repo
+  secret_name     = "CLOUDFLARE_ZONE_ID"
+  plaintext_value = local.zone_id
+}

@@ -104,6 +104,18 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
 
+  clear_cache:
+    runs-on: ubuntu-20.04
+    needs: [upload_to_s3]
+    steps:
+      - name: Clear cloudflare cache
+        run: |
+          curl -X POST \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${{ secrets.TF_VAR_CLOUDFLARE_TOKEN }}" \
+            --data '{"files": ["https://${{ github.event.client_payload.event }}.python.pizza/"]}' \
+            https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache
+
   notify_deploy_completed:
     runs-on: ubuntu-20.04
     needs: [upload_to_s3, notify_deploy_started]

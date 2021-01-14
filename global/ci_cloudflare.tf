@@ -17,6 +17,7 @@ resource "cloudflare_api_token" "ci" {
   policy {
     permission_groups = [
       data.cloudflare_api_token_permission_groups.all.permissions["DNS Write"],
+      data.cloudflare_api_token_permission_groups.all.permissions["Cache Purge"],
     ]
 
     resources = {
