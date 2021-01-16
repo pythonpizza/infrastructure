@@ -30,6 +30,7 @@ def main():
             'event': event,
             'domain': base_domain,
             'sha': SHA,
+            'pr_number': PR_NUMBER,
             'is_pr': EVENT_NAME == 'pull_request'
         }
     }

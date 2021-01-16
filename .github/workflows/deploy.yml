@@ -38,6 +38,38 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
 
+  notify_pr_is_deploying:
+    runs-on: ubuntu-20.04
+    if: ${{ github.event.client_payload.is_pr }}
+    steps:
+      - name: Find Deploy Comment
+        uses: peter-evans/find-comment@v1
+        id: find_comment
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.client_payload.pr_number }}
+          comment-author: pythonpizzabot
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v1
+        if: ${{ steps.find_comment.outputs.comment-id == null }}
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.client_payload.pr_number }}
+          body: |
+            Deploy in progress 🕐
+            🌐 URL: https://${{ github.event.client_payload.domain }}.python.pizza/
+      - name: Update comment
+        uses: peter-evans/create-or-update-comment@v1
+        if: ${{ steps.find_comment.outputs.comment-id != null }}
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.number }}
+          edit-mode: replace
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          body: |
+            Deploy in progress 🕐
+            🌐 URL: https://${{ github.event.client_payload.domain }}.python.pizza/
+
   terraform:
     runs-on: ubuntu-20.04
     defaults:
@@ -117,6 +149,39 @@ jobs:
             -H "Authorization: Bearer ${{ secrets.TF_VAR_CLOUDFLARE_TOKEN }}" \
             --data '{"files": ["https://${{ github.event.client_payload.event }}.python.pizza/"]}' \
             https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache
+
+  notify_pr_deployed:
+    runs-on: ubuntu-20.04
+    if: ${{ github.event.client_payload.is_pr }}
+    needs: [upload_to_s3]
+    steps:
+      - name: Find Deploy Comment
+        uses: peter-evans/find-comment@v1
+        id: find_comment
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.client_payload.pr_number }}
+          comment-author: pythonpizzabot
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v1
+        if: ${{ steps.find_comment.outputs.comment-id == null }}
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.client_payload.pr_number }}
+          body: |
+            PR deployed ✅
+            🌐 URL: https://${{ github.event.client_payload.domain }}.python.pizza/
+      - name: Update comment
+        uses: peter-evans/create-or-update-comment@v1
+        if: ${{ steps.find_comment.outputs.comment-id != null }}
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.number }}
+          edit-mode: replace
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          body: |
+            PR deployed ✅
+            🌐 URL: https://${{ github.event.client_payload.domain }}.python.pizza/
 
   notify_deploy_completed:
     runs-on: ubuntu-20.04
