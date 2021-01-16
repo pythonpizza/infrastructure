@@ -2,7 +2,7 @@ name: Deploy
 
 on:
   repository_dispatch:
-    types: [prod_push]
+    types: [deploy]
 
 jobs:
   notify_deploy_started:

@@ -24,7 +24,7 @@ def main():
         base_domain = event_from_repo_name
 
     data = {
-        'event_type': 'prod_push',
+        'event_type': 'deploy',
         'client_payload': {
             'repository': REPOSITORY_NAME,
             'event': event,
