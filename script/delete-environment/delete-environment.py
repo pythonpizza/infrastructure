@@ -22,6 +22,7 @@ def main():
             'repository': REPOSITORY_NAME,
             'event': event,
             'domain': event,
+            'pr_number': PR_NUMBER
         }
     }
 
