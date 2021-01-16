@@ -17,8 +17,7 @@ def main():
     }
 
     if PR_NUMBER:
-        event = f'pr{PR_NUMBER}-{event_from_repo_name}'
-        base_domain = f'pr{PR_NUMBER}.{event_from_repo_name}'
+        base_domain = event = f'pr{PR_NUMBER}-{event_from_repo_name}'
     else:
         event = event_from_repo_name
         base_domain = event_from_repo_name
