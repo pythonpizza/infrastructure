@@ -7,6 +7,7 @@ def main():
     REPOSITORY_NAME = os.getenv('REPOSITORY_NAME')
     SHA = os.getenv('SHA')
     PR_NUMBER = os.getenv('PR_NUMBER', '')
+    IS_PR = os.getenv('IS_PR', False)
 
     event_from_repo_name = REPOSITORY_NAME.replace('.python.pizza', '')
 
@@ -28,7 +29,8 @@ def main():
             'repository': REPOSITORY_NAME,
             'event': event,
             'domain': base_domain,
-            'sha': SHA
+            'sha': SHA,
+            'is_pr': IS_PR
         }
     }
 
