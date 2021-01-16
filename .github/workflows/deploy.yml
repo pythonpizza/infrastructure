@@ -121,6 +121,8 @@ jobs:
         with:
           path: "**/node_modules"
           key: ${{ runner.os }}-${{ github.event.client_payload.repository }}-modules-${{ hashFiles('**/yarn.lock') }}
+      - name: Install deps
+        run: yarn install
       - name: Build site
         run: yarn build
       - name: Upload build
