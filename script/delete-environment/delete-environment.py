@@ -21,6 +21,7 @@ def main():
         'client_payload': {
             'repository': REPOSITORY_NAME,
             'event': event,
+            'domain': event,
         }
     }
 
