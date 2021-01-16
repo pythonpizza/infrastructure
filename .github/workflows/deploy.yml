@@ -72,6 +72,7 @@ jobs:
         with:
           repository: "pythonpizza/${{ github.event.client_payload.repository }}"
           token: ${{ secrets.BOT_TOKEN }}
+          ref: ${{ github.event.client_payload.sha }}
       - uses: actions/setup-node@v2
         with:
           node-version: "15.5.1"
