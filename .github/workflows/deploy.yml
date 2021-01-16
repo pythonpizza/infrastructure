@@ -116,8 +116,11 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}
-      - uses: bahmutov/npm-install@v1
+          key: ${{ runner.os }}-${{ github.event.client_payload.repository }}-nextjs-${{ hashFiles('**/yarn.lock') }}
+      - uses: actions/cache@v2
+        with:
+          path: "**/node_modules"
+          key: ${{ runner.os }}-${{ github.event.client_payload.repository }}-modules-${{ hashFiles('**/yarn.lock') }}
       - name: Build site
         run: yarn build
       - name: Upload build
