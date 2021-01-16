@@ -32,6 +32,12 @@ jobs:
           AWS_DEFAULT_REGION: eu-central-1
           TF_VAR_cloudflare_token: ${{ secrets.TF_VAR_CLOUDFLARE_TOKEN }}
           TF_VAR_domain: ${{ github.event.client_payload.domain }}
+      - name: Switch to default workspace
+        run: terraform workspace select default
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: eu-central-1
       - name: Delete workspace
         run: terraform workspace delete ${{ github.event.client_payload.event }}
         env:
