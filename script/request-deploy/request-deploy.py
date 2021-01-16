@@ -8,6 +8,8 @@ def main():
     SHA = os.getenv('SHA')
     PR_NUMBER = os.getenv('PR_NUMBER', '')
 
+    event_from_repo_name = REPOSITORY_NAME.replace('.python.pizza', '')
+
     headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/vnd.github.v3+json',
@@ -15,15 +17,17 @@ def main():
     }
 
     if PR_NUMBER:
-        base_domain = f'pr{PR_NUMBER}'
+        event = f'pr{PR_NUMBER}-{event_from_repo_name}'
+        base_domain = f'pr{PR_NUMBER}.{event_from_repo_name}'
     else:
-        base_domain = REPOSITORY_NAME.replace('.python.pizza', '')
+        event = event_from_repo_name
+        base_domain = event_from_repo_name
 
     data = {
         'event_type': 'prod_push',
         'client_payload': {
             'repository': REPOSITORY_NAME,
-            'event': base_domain,
+            'event': event,
             'domain': base_domain,
             'sha': SHA
         }
