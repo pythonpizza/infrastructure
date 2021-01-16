@@ -7,7 +7,7 @@ on:
 jobs:
   notify_deploy_started:
     runs-on: ubuntu-20.04
-    if: github.event.client_payload.is_pr == "false"
+    if: ${{ github.event.client_payload.is_pr == "false" }}
     outputs:
       check_job_id: ${{ fromJson(steps.create_check_run.outputs.data).id }}
     steps:
@@ -121,7 +121,7 @@ jobs:
   notify_deploy_completed:
     runs-on: ubuntu-20.04
     needs: [upload_to_s3, notify_deploy_started]
-    if: github.event.client_payload.is_pr == "false"
+    if: ${{ github.event.client_payload.is_pr == "false" }}
     steps:
       - name: Generate token
         id: generate_token
