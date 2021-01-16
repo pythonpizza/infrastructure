@@ -98,7 +98,7 @@ jobs:
         with:
           name: build
       - name: Upload to S3
-        run: aws s3 cp . s3://${{ github.event.client_payload.event }}.python.pizza/ --recursive
+        run: aws s3 cp . s3://${{ github.event.client_payload.domain }}.python.pizza/ --recursive
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
