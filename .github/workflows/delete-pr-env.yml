@@ -44,3 +44,33 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: eu-central-1
+  notify_env_destroyed:
+    runs-on: ubuntu-20.04
+    needs: delete_env
+    steps:
+      - name: Find Deploy Comment
+        uses: peter-evans/find-comment@v1
+        id: find_comment
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.client_payload.pr_number }}
+          repository: pythonpizza/${{ github.event.client_payload.repository }}
+          comment-author: pythonpizzabot
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v1
+        if: ${{ steps.find_comment.outputs.comment-id == null }}
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.client_payload.pr_number }}
+          repository: pythonpizza/${{ github.event.client_payload.repository }}
+          body: Environment deleted ❌
+      - name: Update comment
+        uses: peter-evans/create-or-update-comment@v1
+        if: ${{ steps.find_comment.outputs.comment-id != null }}
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          issue-number: ${{ github.event.number }}
+          edit-mode: replace
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          repository: pythonpizza/${{ github.event.client_payload.repository }}
+          body: Environment deleted ❌
