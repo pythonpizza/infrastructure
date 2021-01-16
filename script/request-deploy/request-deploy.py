@@ -1,0 +1,41 @@
+import os
+import httpx
+
+
+def main():
+    GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+    REPOSITORY_NAME = os.getenv('REPOSITORY_NAME')
+    SHA = os.getenv('SHA')
+    PR_NUMBER = os.getenv('PR_NUMBER', '')
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json',
+        'authorization': f'Bearer {GITHUB_TOKEN}'
+    }
+
+    if PR_NUMBER:
+        base_domain = f'pr{PR_NUMBER}'
+    else:
+        base_domain = REPOSITORY_NAME.replace('.python.pizza', '')
+
+    data = {
+        'event_type': 'prod_push',
+        'client_payload': {
+            'repository': REPOSITORY_NAME,
+            'event': base_domain,
+            'domain': base_domain,
+            'sha': SHA
+        }
+    }
+
+    request = httpx.post(
+        'https://api.github.com/repos/pythonpizza/infrastructure/dispatches',
+        headers=headers,
+        json=data
+    )
+
+    request.raise_for_status()
+
+
+main()
