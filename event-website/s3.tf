@@ -1,7 +1,8 @@
 data "cloudflare_ip_ranges" "cloudflare" {}
 
 resource "aws_s3_bucket" "website" {
-  bucket = local.fulldomain
+  bucket        = local.fulldomain
+  force_destroy = true
 
   website {
     index_document = "index.html"
